@@ -1,4 +1,4 @@
-export class Rival {
+export class RivalInterface {
     pk?: number
     rivalName: string
     votersNumber?: number

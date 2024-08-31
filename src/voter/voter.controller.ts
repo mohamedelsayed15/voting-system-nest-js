@@ -15,7 +15,7 @@ export class VoterController {
 
 
     @UseGuards(JwtAuthGuard, AdminOnlyGuard)
-    @Post("createVoter")
+    @Post("admin/createVoter")
     async createVoter(@Body(new ValidationPipe()) body: VoterDto) {
         console.log("CONTROLLER")
         const nationalId = body.nationalId

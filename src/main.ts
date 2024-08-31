@@ -3,9 +3,15 @@ import { AppModule } from './app.module';
 import { query } from './db/connection';
 import { AuthService } from './auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   await app.listen(3000);
+  app.useGlobalPipes(new ValidationPipe({
+    transform: true, // Automatically transforms payloads to DTO instances
+    whitelist: true, // Strips properties that do not have decorators
+    forbidNonWhitelisted: true, // Throws an error if non-whitelisted properties are present
+  }));
   console.log(3000)
   try {
     const authService = new AuthService(new JwtService())
