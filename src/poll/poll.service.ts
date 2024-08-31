@@ -93,6 +93,19 @@ export class PollService {
         }
     }
 
+    async selectPollRivals(pollPk: number): Promise<any> {
+        try {
+            const result = await query(pollQueries.selectPollRivals, [
+                pollPk
+            ])
+            return result.rows[0]
+        } catch (e) {
+            console.log(e)
+            throw new InternalServerErrorException()
+        }
+    }
+
+
 
     async paginatePollToVoter(voterPk: number, limit: number, offset: number): Promise<any> {
         try {

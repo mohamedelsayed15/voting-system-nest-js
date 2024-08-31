@@ -31,6 +31,12 @@ export const pollQueries = {
     AND  "voterPk" = $2
     `,
 
+    selectPollRivals: `
+    SELECT *
+    FROM vs."pollRivals"
+    WHERE "pollPk" = $1
+    `,
+    
     paginatePollToVoter: `
     SELECT json_build_object(
             'pollPk', p.pk,
