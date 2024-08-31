@@ -3,12 +3,23 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Payload } from './interface/payload.interface';
 import { query } from 'src/db/connection';
+import { JwtValidateReturn } from './interface/jwtValidateReturn';
 
 type Role = "admin" | "voter"
 @Injectable()
 export class AuthService {
     constructor(private jwtService: JwtService) { }
 
+    async validateToken(token: string) {
+        try {
+        const payload = await this.jwtService.verify(token)
+        return payload
+            
+        } catch (e) {
+            console.log(e)
+            return
+        }
+    }
 
 
     async setTokenOnUser(pk: number, token: string, role: Role): Promise<number> {
@@ -18,13 +29,13 @@ export class AuthService {
         WHERE pk = $2
         `
         try {
-        const result = await query(setTokenQuery, [token, pk])
-        return result.rowCount
+            const result = await query(setTokenQuery, [token, pk])
+            return result.rowCount
         } catch (e) {
             console.log(e)
             return e
         }
-        
+
     }
 
 
