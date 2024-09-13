@@ -3,17 +3,21 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AdminOnlyGuard } from 'src/guards/adminOnly.guard';
 import { PollService } from './poll.service';
 import { PollDto } from './dto/poll.dto';
-import { RivalDto } from './dto/rival.dto';
 import { RivalInterface } from './interface/rival.interface';
 import { VoterOnlyGuard } from 'src/guards/voterOnly.guard';
 import { VoteToDto } from './dto/vote-to.dto';
-import { query } from 'express';
-import { PageDto } from './dto/page.dto';
+import { SocketGateWay } from 'src/socket/socket.gateway';
+import { Repository } from 'typeorm';
+import { PollRivals } from 'src/entities/pollRivals.entity';
+import { PollVoters } from 'src/entities/pollVoters.entity';
 
 @Controller('poll')
 export class PollController {
     constructor(
         private pollService: PollService,
+        private socketGateway: SocketGateWay,
+        private pollRivalsRepo: Repository<PollRivals>,
+        private pollVoterRepo: Repository<PollVoters>
 
     ) { }
 
@@ -41,33 +45,52 @@ export class PollController {
     @Post("voter/vote-to-poll")
     async voteToPoll(@Body(new ValidationPipe()) body: VoteToDto, @Request() req) {
 
-        const { pollPk, pollName, rivalPk, rivalName } = body
+        const { pollName, rivalPk, rivalName } = body
 
         const user = req.user
 
-        const logExist = await this.pollService.selectFromPollVotersLog(pollPk, user.pk)
+        // checking if user already voted
+        const logExist = await this.pollService.selectFromPollVotersLog(body.pollPk, user.pk)
 
+        // error 409 Conflict user already voted
         if (logExist) {
             throw new ConflictException("user already voted")
         }
         const count = await this.pollService.updateRivalVotersTotalCount(
             rivalPk,
-            pollPk,
+            body.pollPk,
             rivalName
         )
-
+        //error 404 poll not found
         if (count === 0) {
-            throw new NotFoundException()
+            throw new NotFoundException("couldn't find poll")
         }
-        await this.pollService.updatePollVotersTotalCount(pollPk)
-
+        await this.pollService.updatePollVotersTotalCount(body.pollPk)
 
         const log = await this.pollService.insertPollVoter({
-            pollPk,
+            pollPk: body.pollPk,
             rivalName,
             rivalPk,
             voterName: user.firstName + user.secondName,
             voterPk: user.pk
+        })
+
+        const pollRivals = await this.pollRivalsRepo.find({
+            where: {
+                pollPk: { pk: body.pollPk }
+            }
+        })
+        // on vote send rivals
+        this.socketGateway.emitToRoom(`poll-${body.pollPk}`, {
+            pollRivals
+        })
+        // on vote cast vote to connected users
+        this.socketGateway.emitToRoom(`vote-cast`, {
+            voterName: user.firstName + user.secondName,
+            pollPk: body.pollPk,
+            pollName,
+            rivalName,
+            rivalPk
         })
         return log
     }

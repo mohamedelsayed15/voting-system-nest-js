@@ -55,6 +55,8 @@ CREATE TABLE vs."pollRivals" (
 );
 CREATE INDEX poll_rival_poll_pk ON vs."pollRivals"("pollPk");
 
+
+
 SELECT json_build_object(
         'pollPk', p.pk,
 		'pollName', p."pollName",

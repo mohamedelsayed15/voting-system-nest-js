@@ -1,5 +1,4 @@
-
-import { SubscribeMessage, WebSocketGateway, WebSocketServer, WsException } from "@nestjs/websockets";
+import { SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { AuthService } from "src/auth/auth.service";
 import { Interval } from '@nestjs/schedule';
 import { PollService } from "src/poll/poll.service";
@@ -45,29 +44,31 @@ export class SocketGateWay {
 
     @SubscribeMessage('joinRoom')
     handleJoinRoom(client: Socket, room: string) {
-        const roomPattern = /^poll-\d+$/;
-
-        if (!roomPattern.test(room)) {
-            client.disconnect();
-            return;
+        if (room === "vote-cast") {
+            client.join(room);
+        } else {
+            const roomPattern = /^poll-\d+$/;
+            if (!roomPattern.test(room)) {
+                client.disconnect();
+                return;
+            }
+            client.join(room);
         }
-        client.join(room);
-        client.emit("join", `room ${room}`);
     }
 
     emitToRoom(room: string, payload: any) {
         this.server.to(room).emit(room, payload);
     }
 
-    @Interval(1000)
-    async handleInterval() {
-        // POLL PK = 2 ONLY 
-        try {
-            const rivals = await this.pollService.selectPollRivals(2)
-            this.emitToRoom("poll-2", { rivals });
-        } catch (e) {
-            console.log(e)
-        }
-    }
+    // @Interval(10000)
+    // async handleInterval() {
+    //     // POLL PK = 2 ONLY 
+    //     try {
+    //         const rivals = await this.pollService.selectPollRivals(2)
+    //         this.emitToRoom("poll-2", { rivals });
+    //     } catch (e) {
+    //         console.log(e)
+    //     }
+    // }
 }
 

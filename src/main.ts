@@ -28,7 +28,7 @@ async function bootstrap() {
     console.log("admin created")
   } catch (e) {
     if (e.code === "23505") {
-      console.log("default admin already is created")
+      console.log("default admin is already created")
     } else {
       console.log(e.code)
     }
