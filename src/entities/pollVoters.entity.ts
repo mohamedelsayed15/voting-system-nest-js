@@ -28,7 +28,7 @@ export class PollVoters {
 
     @ManyToOne(() => Poll, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'pollPk' })
-    pollPk: Poll | number;
+    pollPk: Poll ;
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;

@@ -1,9 +1,4 @@
 export const pollQueries = {
-    createPoll: `INSERT INTO vs.poll("pollName", "pollTotalRivals") 
-    VALUES ($1, $2) RETURNING *`,
-
-    insertRival: `INSERT INTO vs."pollRivals"
-    ("rivalName", "pollPk") VALUES ($1, $2) RETURNING *`,
 
     updateRivalVotersCount: `UPDATE vs."pollRivals" 
     SET "votersNumber" = "votersNumber" + 1
@@ -11,72 +6,73 @@ export const pollQueries = {
     AND "pollPk" = $2
     AND "rivalName" = $3
     `,
-
-    updatePollVotersCount: `UPDATE vs."poll" 
-    SET "pollTotalVoters" = "pollTotalVoters" + 1
-    WHERE "pk" = $1
-    `,
-
-
-    insertIntoPollVoters: `
-    INSERT INTO vs."pollVoters"
-    ("rivalPk", "rivalName", "voterName", "voterPk", "pollPk")
-    VALUES ($1, $2, $3, $4, $5) RETURNING *
-    `,
-
-    selectLogFromPollVoters: `
-    SELECT *
-    FROM vs."pollVoters"
-    WHERE "pollPk" = $1
-    AND  "voterPk" = $2
-    `,
-
-    selectPollRivals: `
-    SELECT *
-    FROM vs."pollRivals"
-    WHERE "pollPk" = $1
-    `,
+    findPollByPk: `
     
+SELECT 
+p."pk" AS "pollPk",
+p."pollName",
+p."pollTotalVoters",
+p."pollTotalRivals",
+p."createdAt",
+JSON_AGG(json_build_object( 
+    'rivalPk', r."pk",
+    'rivalName', r."rivalName",
+    'votersNumber', r."votersNumber"
+)) AS "rivals",
+COALESCE(
+    JSON_AGG(json_build_object( 
+        'voterName', v."voterName",
+        'voterPk', v."voterPk",
+        'rivalPk', v."rivalPk"
+    )) FILTER (WHERE v."voterPk" IS NOT NULL), 
+    '[]'::json  
+) AS "voterDetails"
+FROM 
+vs."poll" p
+LEFT JOIN 
+vs."pollRivals" r ON p."pk" = r."pollPk" 
+LEFT JOIN 
+vs."pollVoters" v ON p."pk" = v."pollPk" AND v."voterPk" = $1  
+GROUP BY 
+p."pk"
+ORDER BY 
+p."createdAt" DESC
+
+WHERE p.pk = $2
+
+    `,
     paginatePollToVoter: `
-    SELECT json_build_object(
-            'pollPk', p.pk,
-            'pollName', p."pollName",
-            'pollTotalVoters', p."pollTotalVoters",
-            'pollTotalRivals', p."pollTotalRivals",
-            'pollCreatedAt', p."createdAt",
-    
-            'rivals',(
-                SELECT jsonb_agg(
-                    jsonb_build_object(
-                        'rivalPk', pr."pk",
-                        'rivalName', pr."rivalName",
-                        'votersNumber', pr."votersNumber"
-                    )
-                )
-                FROM vs."pollRivals" pr
-                WHERE "pollPk" = p.pk
-            ),
-            'voterDetails', (
-                SELECT jsonb_agg(
-                    jsonb_build_object(
-                        'voterName', pv."voterName",
-                        'voterPk', pv."voterPk",
-                        'rivalPk', pv."rivalPk",
-                        'rivalName', pv."rivalName"
-                    )
-                )
-                FROM vs."pollVoters" pv
-                WHERE pv."pollPk" = p.pk
-                AND pv."voterPk" = $1  
-            )
-        )
-    
-        FROM vs.poll p
-    
-    ORDER BY p."createdAt" DESC
-    
-    LIMIT $2
-    OFFSET $3
+   
+SELECT 
+p."pk" AS "pollPk",
+p."pollName",
+p."pollTotalVoters",
+p."pollTotalRivals",
+p."createdAt",
+JSON_AGG(json_build_object(  -- Aggregate rivals into a JSON array
+    'rivalPk', r."pk",
+    'rivalName', r."rivalName",
+    'votersNumber', r."votersNumber"
+)) AS "rivals",
+COALESCE(
+    JSON_AGG(json_build_object(  -- Aggregate voter details into a JSON array
+        'voterName', v."voterName",
+        'voterPk', v."voterPk",
+        'rivalPk', v."rivalPk"
+    )) FILTER (WHERE v."voterPk" IS NOT NULL), 
+    '[]'::json  -- Default to an empty JSON array if no voter details
+) AS "voterDetails"
+FROM 
+vs."poll" p
+LEFT JOIN 
+vs."pollRivals" r ON p."pk" = r."pollPk"  -- Join pollRivals on pollPk
+LEFT JOIN 
+vs."pollVoters" v ON p."pk" = v."pollPk" AND v."voterPk" = $1  -- Join pollVoters on pollPk and filter by a specific voter ID
+GROUP BY 
+p."pk"
+ORDER BY 
+p."createdAt" DESC
+LIMIT $2 OFFSET $3; 
     `
 
 }

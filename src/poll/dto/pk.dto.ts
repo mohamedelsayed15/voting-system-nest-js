@@ -2,8 +2,8 @@ import { Type } from 'class-transformer';
 import { IsInt } from 'class-validator';
 
 
-export class PageQuery {
+export class PollPk {
     @Type(() => Number)
     @IsInt()
-    page: number;
+    pollPk: number;
 }

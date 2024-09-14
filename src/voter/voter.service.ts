@@ -1,36 +1,46 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { query } from 'src/db/connection';
 import { VoterInterFace } from './interface/voter.interface';
-import { voterQueries } from './voter.query';
+import { Repository } from 'typeorm';
+import { Voter } from 'src/entities/voter.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 @Injectable()
 export class VoterService {
 
+    constructor(
+        @InjectRepository(Voter)
+        private voterRepo: Repository<Voter>) {
+
+    }
+
     async createVoter(voter: VoterInterFace): Promise<VoterInterFace> {
         try {
-            const result = await query(voterQueries.createVoter, [
-                voter.firstName,
-                voter.secondName,
-                voter.nationalId,
-                voter.password
-            ])
-            return result.rows[0]
+            const newVoter = this.voterRepo.create({
+                nationalId: voter.nationalId,
+                password: voter.password,
+                firstName: voter.firstName,
+                secondName: voter.secondName
+            })
+
+            return await this.voterRepo.save(newVoter)
         } catch (e) {
             console.log(e)
             throw new InternalServerErrorException()
         }
     }
 
-    async selectVoterByNationalIdoRPk(value: string | number, by: "nationalId" | "pk"): Promise<VoterInterFace> {
-        let selectVoterByNIDoRPkQuery = `
-        SELECT *
-        FROM vs.voter
-        WHERE "${by}" = $1
-        `
+    async findVoterByPk(pk: number): Promise<VoterInterFace> {
         try {
-            const result = await query(selectVoterByNIDoRPkQuery, [
-                value
-            ])
-            return result.rows[0]
+            const voter = await this.voterRepo.findOneBy({ pk })
+            return voter
+        } catch (e) {
+            console.log(e)
+            throw new InternalServerErrorException()
+        }
+    }
+    async findVoterByNationalId(nationalId: string): Promise<VoterInterFace> {
+        try {
+            const voter = await this.voterRepo.findOneBy({ nationalId })
+            return voter
         } catch (e) {
             console.log(e)
             throw new InternalServerErrorException()

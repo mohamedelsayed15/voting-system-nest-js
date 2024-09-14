@@ -15,21 +15,13 @@ export class AuthController {
 
     @Post("login")
     async login(@Body(new ValidationPipe()) body: LoginDto) {
-
-
         let role = body.role
-        console.log(role)
+
         let user
         if (role === "admin") {
-            user = await this.adminService.selectAdminByLoginNameOrPk(
-                body.loginText,
-                "loginName"
-            )
+            user = await this.adminService.findAdminByLoginName(body.loginText)
         } else {
-            user = await this.voterService.selectVoterByNationalIdoRPk(
-                body.loginText,
-                "nationalId"
-            )
+            user = await this.voterService.findVoterByNationalId(body.loginText)
         }
 
         if (!user) {
@@ -43,7 +35,7 @@ export class AuthController {
         if (!comparedPasswords) {
             throw new NotFoundException('no user')
         }
-        console.log(111)
+
         const token = await this.authService.loginToken(user, role)
 
         await this.authService.setTokenOnUser(user.pk, token, role)//

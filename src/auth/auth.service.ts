@@ -48,7 +48,6 @@ export class AuthService {
                 role
             }
             try {
-                console.log(payload)
                 const token = await this.jwtService.sign(payload)
                 resolve(token)
             } catch (e) {

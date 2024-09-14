@@ -1,7 +1,5 @@
 import { SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { AuthService } from "src/auth/auth.service";
-import { Interval } from '@nestjs/schedule';
-import { PollService } from "src/poll/poll.service";
 import { Server, Socket } from "socket.io";
 
 
@@ -13,7 +11,7 @@ export class SocketGateWay {
 
     constructor(
         private readonly authService: AuthService,
-        private pollService: PollService) { }
+        ) { }
 
 
     async handleConnection(client: Socket) {

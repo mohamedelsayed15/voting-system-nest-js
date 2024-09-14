@@ -17,13 +17,11 @@ export class VoterController {
     @UseGuards(JwtAuthGuard, AdminOnlyGuard)
     @Post("admin/createVoter")
     async createVoter(@Body(new ValidationPipe()) body: VoterDto) {
-        console.log("CONTROLLER")
+
         const nationalId = body.nationalId
         const password = body.password
 
-        const voterExist = await this.voterService.selectVoterByNationalIdoRPk(
-            nationalId,
-            "nationalId")
+        const voterExist = await this.voterService.findVoterByNationalId(nationalId)
 
         if (voterExist) {
             throw new ConflictException("voter already exists")

@@ -20,7 +20,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       type: "postgres",
       url: process.env.DATABASE_URL,
       database: "vs",
-      entities: ['dist/**/*.entity.js'],
+      entities: [__dirname + '/../**/*.entity.js'],
       synchronize: true,
       
     })
