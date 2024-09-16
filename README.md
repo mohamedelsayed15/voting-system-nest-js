@@ -1,8 +1,8 @@
--- note that you need to create a db under the name "vs" and a schema under the name "vs" 
+-- note that you need to create a db under the name "vs" and a schema under the name "vs"
 
 -- the database used on this project is Postgres
 
---  a default admin is created on the run login Text is "mohamed1111" $ password is "11111111" case the user is already created this message is going to be printed 
+-- a default admin is created on the run login Text is "mohamed1111" $ password is "11111111" case the user is already created this message is going to be printed
 "default admin is already created"
 
 .env file
@@ -11,25 +11,33 @@ DATABASE_URL="postgres://postgres:621654@127.0.0.1:5432/vs?currentSchema=vs"
 JWT_SECRET="12345679UrJwtSecret"
 JWT_EXPIRATION_TIME="1d"
 
+apis documentation link:
+
+https://documenter.getpostman.com/view/21060881/2sAXqp8iLY
 
 ** ideas for improvement **:
 
-1) building a robust system for logout either by allowing multiple devices at a time or 1 device at a time
+1. building a robust system for logout either by allowing multiple devices at a time or 1 device at a time
 
-2) default admin credentials shouldn't be directly provided on the code through the environment is a lot safe and recommended 
+2. default admin credentials shouldn't be directly provided on the code through the environment is a lot safe and recommended
 
-3) ability to add another admins and control them through a super user 
+3. ability to add another admins and control them through a super user
 
-4) ability to update your account either password or name 
+4. ability to update your account either password or name
 
-5) log for the user of his participation in polls
+5. log for the user of his participation in polls
 
-6) after a specific a mount of time the poll should end and users shouldn't be able to participate in it after that
+6. after a specific a mount of time the poll should end and users shouldn't be able to participate in it after that
 
-7) support for different JWT secrets for the current 2 roles
+7. support for different JWT secrets for the current 2 roles
 
+8. incase the number of the polls is not a big number its better to create an interval that retrieves data and broadcast the result every from 5-10 seconds
 
+9. code should be clean from console.log as it's a blocking code and costly
 
+10. request size limit & rate limit is needed to prevent attacks on the server either on the application lvl or the reverse proxy level
+
+11. using raw queries directly without wrapping it with a function
 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
