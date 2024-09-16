@@ -5,6 +5,8 @@ import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AdminOnlyGuard } from 'src/guards/adminOnly.guard';
 
+
+// prefix indicates feature name
 @Controller('voter')
 export class VoterController {
 
@@ -15,7 +17,7 @@ export class VoterController {
 
 
     @UseGuards(JwtAuthGuard, AdminOnlyGuard)
-    @Post("admin/createVoter")
+    @Post("admin/createVoter") // prefix indicates who is authorized to run this route
     async createVoter(@Body(new ValidationPipe()) body: VoterDto) {
 
         const nationalId = body.nationalId

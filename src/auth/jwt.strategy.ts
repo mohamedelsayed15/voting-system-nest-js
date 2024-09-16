@@ -2,7 +2,6 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { Payload } from "./interface/payload.interface";
-
 import secret from "./jwt-secret";
 import { AdminService } from "src/admin/admin.service";
 import { VoterService } from "src/voter/voter.service";
@@ -29,7 +28,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(req, payload: Payload) {
-        console.log("JWT")
 
         const token = req.header('Authorization').substring(7)
 

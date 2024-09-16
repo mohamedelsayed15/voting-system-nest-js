@@ -17,7 +17,8 @@ async function bootstrap() {
     const authService = new AuthService(new JwtService())
     const password = "11111111"
     const hashPassword = await authService.hashPassword(password)
-    await query(`INSERT INTO vs.admin("firstName", "secondName", "loginName", "password")
+    await query(`
+    INSERT INTO vs.admin("firstName", "secondName", "loginName", "password")
     VALUES($1, $2, $3, $4)
     `, [
       "mohamed",

@@ -1,3 +1,36 @@
+-- note that you need to create a db under the name "vs" and a schema under the name "vs" 
+
+-- the database used on this project is Postgres
+
+--  a default admin is created on the run login Text is "mohamed1111" $ password is "11111111" case the user is already created this message is going to be printed 
+"default admin is already created"
+
+.env file
+
+DATABASE_URL="postgres://postgres:621654@127.0.0.1:5432/vs?currentSchema=vs"
+JWT_SECRET="12345679UrJwtSecret"
+JWT_EXPIRATION_TIME="1d"
+
+
+** ideas for improvement **:
+
+1) building a robust system for logout either by allowing multiple devices at a time or 1 device at a time
+
+2) default admin credentials shouldn't be directly provided on the code through the environment is a lot safe and recommended 
+
+3) ability to add another admins and control them through a super user 
+
+4) ability to update your account either password or name 
+
+5) log for the user of his participation in polls
+
+6) after a specific a mount of time the poll should end and users shouldn't be able to participate in it after that
+
+7) support for different JWT secrets for the current 2 roles
+
+
+
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
