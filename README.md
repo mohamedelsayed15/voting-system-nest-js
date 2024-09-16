@@ -7,8 +7,10 @@
 
 .env file
 
-DATABASE_URL="postgres://postgres:621654@127.0.0.1:5432/vs?currentSchema=vs"
+DATABASE_URL="postgres://postgres:{POSTGRES_PASSWORD}@127.0.0.1:5432/vs?currentSchema=vs"
+
 JWT_SECRET="12345679UrJwtSecret"
+
 JWT_EXPIRATION_TIME="1d"
 
 apis documentation link:
