@@ -12,9 +12,9 @@ export class AuthService {
 
     async validateToken(token: string) {
         try {
-        const payload = await this.jwtService.verify(token)
-        return payload
-            
+            const payload = await this.jwtService.verify(token)
+            return payload
+
         } catch (e) {
             console.log(e)
             return
@@ -58,9 +58,19 @@ export class AuthService {
     }
 
     async hashPassword(password: string): Promise<string> {
-        return await bcrypt.hash(password, 10);
+        try {
+            return await bcrypt.hash(password, 10);
+        } catch (e) {
+            console.log(e)
+            throw new InternalServerErrorException()
+        }
     }
     async comparePasswords(password: string, hash: string): Promise<boolean> {
-        return await bcrypt.compare(password, hash);
+        try {
+            return await bcrypt.compare(password, hash);
+        } catch (e) {
+            console.log(e)
+            throw new InternalServerErrorException()
+        }
     }
 }
