@@ -9,8 +9,11 @@ import { PollVoters } from 'src/entities/pollVoters.entity';
 import { PollRivals } from 'src/entities/pollRivals.entity';
 
 @Module({
-  imports: [AuthModule, TypeOrmModule.forFeature([Poll, PollVoters, PollRivals])],
+  imports: [
+    AuthModule,
+    TypeOrmModule.forFeature([Poll, PollVoters, PollRivals]),
+  ],
   providers: [PollService, SocketGateWay],
-  controllers: [PollController]
+  controllers: [PollController],
 })
-export class PollModule { }
+export class PollModule {}

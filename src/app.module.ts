@@ -7,7 +7,6 @@ import { SocketModule } from './socket/socket.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-
 @Module({
   imports: [
     VoterModule,
@@ -17,15 +16,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     SocketModule,
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
-      type: "postgres",
+      type: 'postgres',
       url: process.env.DATABASE_URL,
-      database: "vs",
+      database: 'vs',
       entities: [__dirname + '/../**/*.entity.js'],
       synchronize: true,
-      
-    })
+    }),
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

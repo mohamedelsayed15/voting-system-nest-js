@@ -1,9 +1,9 @@
-import { RivalInterface } from "./rival.interface";
+import { RivalInterface } from './rival.interface';
 
 export class PollInterface {
-    pk?: number
-    pollName: string
-    pollTotalVoters: number
-    pollTotalRivals: number
-    rivals?: RivalInterface[]
+  pk?: number;
+  pollName: string;
+  pollTotalVoters: number;
+  pollTotalRivals: number;
+  rivals?: RivalInterface[];
 }

@@ -1,40 +1,32 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { PassportStrategy } from "@nestjs/passport";
-import { ExtractJwt, Strategy } from "passport-jwt";
-import { Payload } from "./interface/payload.interface";
-import secret from "./jwt-secret";
-import { AdminService } from "src/admin/admin.service";
-import { VoterService } from "src/voter/voter.service";
-import { JwtValidateReturn } from "./interface/jwtValidateReturn";
-
-
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Payload } from './interface/payload.interface';
+import secret from './jwt-secret';
+import { AdminService } from 'src/admin/admin.service';
+import { VoterService } from 'src/voter/voter.service';
+import { JwtValidateReturn } from './interface/jwtValidateReturn';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor(
+    private adminService: AdminService,
+    private voterService: VoterService,
+  ) {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: secret,
+      ignoreExpiration: false,
+      passReqToCallback: true,
+    });
+  }
 
-    constructor(
-        private adminService: AdminService,
-        private voterService: VoterService
-    ) {
+  async validate(req, payload: Payload) {
+    const token = req.header('Authorization').substring(7);
 
-        super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-            secretOrKey: secret,
-            ignoreExpiration: false,
-            passReqToCallback: true
-        });
+    const user: JwtValidateReturn = payload;
+    user.token = token;
 
-
-    }
-
-    async validate(req, payload: Payload) {
-
-        const token = req.header('Authorization').substring(7)
-
-        const user: JwtValidateReturn = payload
-        user.token = token
-
-
-        return user
-    }
+    return user;
+  }
 }

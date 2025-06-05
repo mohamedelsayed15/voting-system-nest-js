@@ -1,4 +1,4 @@
-type queryReturn = {
-    rowCount: number
-    rows: any[]
-}
+export type queryReturn = {
+  rowCount: number;
+  rows: any[];
+};

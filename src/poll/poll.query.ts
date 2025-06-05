@@ -1,12 +1,11 @@
 export const pollQueries = {
-
-    updateRivalVotersCount: `UPDATE vs."pollRivals" 
+  updateRivalVotersCount: `UPDATE vs."pollRivals" 
     SET "votersNumber" = "votersNumber" + 1
     WHERE "pk" = $1
     AND "pollPk" = $2
     AND "rivalName" = $3
     `,
-    findPollByPk: `
+  findPollByPk: `
     
 SELECT 
 p."pk" AS "pollPk",
@@ -41,7 +40,7 @@ p."createdAt" DESC
 WHERE p.pk = $2
 
     `,
-    paginatePollToVoter: `
+  paginatePollToVoter: `
    
 SELECT 
 p."pk" AS "pollPk",
@@ -73,6 +72,5 @@ p."pk"
 ORDER BY 
 p."createdAt" DESC
 LIMIT $2 OFFSET $3; 
-    `
-
-}
+    `,
+};
